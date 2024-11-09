@@ -1,0 +1,7 @@
+# Mac OSX Files
+.DS_Store
+
+# General Files
+node_modules
+npm-debug.log
+dist

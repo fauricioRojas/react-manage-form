@@ -1,0 +1,24 @@
+# Ignore artifacts:
+build
+dist
+lib
+coverage
+
+# Ignore all HTML files:
+**/*.html
+
+node_modules
+package-lock.json
+yarn.lock
+lint-*
+*.cjs
+.gitignore
+.prettierignore
+.prettierrc
+.prettierrc
+package.json
+.vscode
+README.md
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
