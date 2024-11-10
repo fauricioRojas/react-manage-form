@@ -30,7 +30,6 @@ export const Form = <T extends FieldValues>({
   const methods = useForm<T>({ fields, defaultValues });
   const { handleSubmit, reset, watch } = methods;
   const watchedValues = watchValues ? watch() : null;
-  console.log('watchedValues: ', watchedValues);
 
   const handleReset = () => reset();
 

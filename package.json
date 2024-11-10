@@ -1,7 +1,6 @@
 {
   "name": "react-manage-form",
-  "version": "0.0.1",
-  "type": "module",
+  "version": "0.0.3",
   "description": "Implementation of react-hook-form and yup to manage forms in an easy-to-use way based on array of fields",
   "author": "Fauricio Rojas Hernandez fauri.1994@gmail.com @fauricioRojas",
   "main": "lib/index.js",
@@ -15,10 +14,15 @@
     "typescript"
   ],
   "scripts": {
-    "build": "npm run prebuild && tsc",
+    "build": "tsc",
     "clean-modules": "rimraf ./node_modules ./yarn.lock",
     "prebuild": "rimraf ./lib && npm run prettier",
     "prettier": "prettier --write ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier && git add ."
+    }
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.1",
@@ -28,11 +32,7 @@
   },
   "devDependencies": {
     "@types/react": "18.3.12",
-    "eslint": "^8.0.1",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "5.0.0",
+    "husky": "9.1.6",
     "prettier": "3.3.3",
     "prettier-plugin-organize-imports": "4.1.0",
     "rimraf": "6.0.1",

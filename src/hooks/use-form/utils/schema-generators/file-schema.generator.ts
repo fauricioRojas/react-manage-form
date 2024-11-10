@@ -24,7 +24,6 @@ export const fileSchemaGenerator = () => {
     accept(accept?: FileExtension[] | Accept) {
       if (accept) {
         const isAcceptAnArray = Array.isArray(accept);
-        // @ts-expect-error ListFormat does not exist in Intl
         const formatter = new Intl.ListFormat('en', {
           style: 'long',
           type: 'conjunction',
@@ -38,7 +37,6 @@ export const fileSchemaGenerator = () => {
         schema = schema.test(
           'fileExtension',
           acceptMessage,
-          // @ts-expect-error use FileList to type the parameter
           (fileList?: FileList) => {
             if (fileList && fileList.length) {
               const fileExtension = `.${fileList[0].name.split('.').pop()}`;
