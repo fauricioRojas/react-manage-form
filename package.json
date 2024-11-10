@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "clean-modules": "rimraf ./node_modules ./yarn.lock",
-    "prebuild": "rimraf ./lib && npm run prettier",
+    "prebuild": "rimraf ./lib",
     "prettier": "prettier --write ."
   },
   "dependencies": {
