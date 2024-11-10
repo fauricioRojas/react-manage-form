@@ -1,6 +1,6 @@
 {
   "name": "react-manage-form",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "Implementation of react-hook-form and yup to manage forms in an easy-to-use way based on array of fields",
   "author": "Fauricio Rojas Hernandez fauri.1994@gmail.com @fauricioRojas",
   "main": "lib/index.js",
