@@ -153,10 +153,214 @@ A component that is in charge of run based on array of fields all the the schema
 
 It is the context from `react-hook-form`.
 
+### Fields implementation
+
+This is a recommendation of how to implement the `useFormContext` with an input.
+- Use the context.
+- Register the field using the `name` prop.
+- Use `lodash.get` to access to the error message based on the `name` prop.
+- Pass all props returned by the register function to the input.
+
+#### `<ErrorMessage />` component
+
+This is a recommendation of how to show up error messages in an easy way.
+
+```tsx
+import type { FC, PropsWithChildren } from 'react';
+
+export const ErrorMessage: FC<PropsWithChildren> = ({ children }) =>
+  !!children && <p style={{ color: 'red', marginTop: 3 }}>{children}</p>;
+```
+
+#### `<Input />` component
+```tsx
+import get from 'lodash.get';
+import type { ComponentProps, FC } from 'react';
+import { useFormContext } from 'react-manage-form';
+
+import { ErrorMessage } from '@shared/components';
+
+type InputProps = Omit<ComponentProps<'input'>, 'name'> & {
+  name: string;
+}
+
+export const Input: FC<InputProps> = ({
+  name,
+  type = 'text',
+  ...rest
+}) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const registered = register(name);
+  const errorMessage = get(errors, name)?.message as string | undefined;
+
+  return (
+     <div style={{ display: 'flex', flexDirection: 'column', }}>
+      <input
+        type={type}
+        {...rest}
+        {...registered}
+        style={{ borderColor: errorMessage ? 'red' : undefined }}
+      />
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </div>
+  );
+};
+```
+
+#### `<Checkbox />` component
+```tsx
+import get from 'lodash.get';
+import type { ComponentProps, FC } from 'react';
+import { useFormContext } from 'react-manage-form';
+
+import { ErrorMessage } from '@shared/components';
+
+type CheckboxProps = Omit<ComponentProps<'input'>, 'type'> & {
+  label: string;
+  name: string;
+}
+
+export const Checkbox: FC<CheckboxProps> = ({
+  label,
+  name,
+  ...rest
+}) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const registered = register(name);
+  const errorMessage = get(errors, name)?.message as string | undefined;
+
+  return (
+     <div style={{ display: 'flex', flexDirection: 'column', }}>
+      <input
+        type="checkbox"
+        {...rest}
+        id={name}
+        title={title}
+        {...registered}
+      />
+      <label
+        htmlFor={name}
+        className="form-check-label"
+        style={{ marginLeft: '0.5rem' }}
+      >
+        {label}
+      </label>
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </div>
+  );
+};
+```
+
+#### `<RadioGroup />` component
+```tsx
+import get from 'lodash.get';
+import type { ComponentProps, FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { ErrorMessage } from '@shared/components';
+
+type RadioOption = {
+  label: string;
+  value: string;
+};
+
+type RadioGroupProps = Pick<ComponentProps<'input'>, 'placeholder' | 'type'> & {
+  label?: string;
+  name: string;
+  options: RadioOption[];
+};
+
+export const RadioGroup: FC<RadioGroupProps> = ({ label, name, options, ...rest }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const registered = register(name, { value: '' });
+  const errorMessage = get(errors, name)?.message as string | undefined;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {label && <label style={{ marginBottom: '0.5rem' }}>{label}</Label>}
+      <fieldset style={{ display: 'flex', gap: '0.5rem' }} {...rest}>
+        {options.map((option) => (
+          <label
+            key={option.value}
+            htmlFor={`radio-${option.value}`}
+            style={{ marginBottom: 0 }}
+          >
+            <input
+              type="radio"
+              value={option.value}
+              id={`radio-${option.value}`}
+              {...registered}
+            />{' '}
+            {option.label}
+          </label>
+        ))}
+      </fieldset>
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </div>
+  );
+};
+```
+
+#### `<Select />` component
+```tsx
+import get from 'lodash.get';
+import type { ComponentProps, FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { ErrorMessage } from '@shared/components';
+
+type SelectOption = {
+  label: string;
+  value: string;
+};
+
+type SelectProps = ComponentProps<'select'> & {
+  label?: string;
+  name: string;
+  options: SelectOption[];
+};
+
+export const Select: FC<SelectProps> = ({ label, name, options, ...rest }) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const registered = register(name);
+  const errorMessage = get(errors, name)?.message as string | undefined;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {label && <label style={{ marginBottom: '0.5rem' }}>{label}</label>}
+      <select {...rest} {...registered} style={{ borderColor: errorMessage ? 'red' : undefined }}>
+        <option value="">Please choose one option</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <ErrorMessage>{errorMessage}</ErrorMessage>
+    </div>
+  );
+};
+
+```
+
 ### Quickstart
 
 ```tsx
 import { type Field, Form } from 'react-manage-form';
+
+import { Input } from '@shared/components';
 
 type LoginForm = {
   username: string;
@@ -192,12 +396,93 @@ const Login = () => {
 
   return (
     <DataForm fields={fields} watchValues={watchValues} onSubmit={handleLogin}>
-      <input type="text" name="username" />
-      <input type="password" name="password" />
+      <Input type="text" name="username" />
+      <Input type="password" name="password" />
       <button type="submit" formNoValidate>
         Sign In
       </button>
     </DataForm>
   );
 };
+```
+
+### Fields example
+
+See how fields can look and choose whichever work fir your projects.
+
+```tsx
+import { type Field } from 'react-manage-form';
+
+type Favorite = {
+  name: string;
+  tShirtSize: string;
+  favoriteShoes: string[];
+  resume: File;
+};
+
+const fields: Field<Favorite>[] = [
+  {
+    name: 'name',
+    type: 'text',
+    required: true,
+  },
+  {
+    name: 'tShirtSize',
+    type: 'radio',
+    required: true,
+  },
+  {
+    name: 'favoriteShoes',
+    type: 'checkbox-group',
+  },
+  {
+    name: 'resume',
+    type: 'file',
+    required: true,
+    accept: ['.pdf', '.txt'],
+  },
+];
+
+```
+### Conditional fields example
+
+See how conditional fields can look and choose whichever work fir your projects.
+
+```tsx
+import { type Field } from 'react-manage-form';
+
+type FileForm {
+  fileType: string;
+  fileUrl?: string;
+  file?: File;
+}
+
+const fields: Field<FileForm>[] = [
+  {
+    name: 'fileType',
+    type: 'radio',
+    when: [
+      {
+        value: 'url',
+        fields: [
+          {
+            name: 'fileUrl',
+            type: 'text',
+            required: true,
+          },
+        ],
+      },
+      {
+        value: 'upload',
+        fields: [
+          {
+            name: 'file',
+            type: 'file',
+            required: true,
+          },
+        ],
+      },
+    ],
+  },
+];
 ```
